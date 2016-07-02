@@ -4,6 +4,14 @@ function randint(min, max){
   return Math.floor((max+1-min)*Math.random())+ min;
 }
 
+function modulus(start,end){
+  if(start>0){
+    return start%end;
+  }else{
+    return end+start%end;
+  }
+}
+
 var Comparators = {
     LT : function(lotsodata){
       var ssum = 0;
@@ -138,14 +146,18 @@ function run(brain){
   for(;curTime < maxTime && Math.sqrt(Math.pow(position[0] - foodPos[0], 2) + Math.pow(position[1] - foodPos[1], 2)) > 0.05; curTime++){
     //create input by finding if food is in front of the animal
     var distance = Math.abs(Math.tan(position[2])*foodPos[0] - Math.tan(position[2])*position[0] + position[1] - foodPos[1])/Math.sqrt(Math.pow(Math.tan(position[2]),2) + 1);//distance from line to point
-    brain.neurons[0].output = distance<0.05;
-    brain.update();
+    var distance = Math.abs(Math.tan(position[2])*foodPos[0] - Math.tan(position[2])*position[0] + position[1] - foodPos[1])/Math.sqrt(Math.pow(Math.tan(position[2]),2) + 1);//distance from line to point
+    brain.neurons[0].output = distance<0.05 && (
+      (position[0] - foodPos[0] > 0 == (position[2] > Math.PI/2 && position[2] < Math.PI*3/2)) && 
+      (position[1] - foodPos[1] < 0 == (position[2] > 0 && position[2] < Math.PI)));
     //move position
     if(brain.neurons[brain.neurons.length - 3].output){//turn left
       position[2] += 0.05;
+      position[2] = modulus(position[2],Math.PI*2);
     }
     if(brain.neurons[brain.neurons.length - 2].output){//turn right
       position[2] -= 0.05;
+      position[2] = modulus(position[2],Math.PI*2);
     }
     if(brain.neurons[brain.neurons.length - 1].output){//forward
       position[0] += Math.cos(position[2])*0.05;
@@ -167,20 +179,24 @@ function animate(brain, ctx, speed){
   var runner = setInterval(function(){
     //create input by finding if food is in front of the animal
     var distance = Math.abs(Math.tan(position[2])*foodPos[0] - Math.tan(position[2])*position[0] + position[1] - foodPos[1])/Math.sqrt(Math.pow(Math.tan(position[2]),2) + 1);//distance from line to point
-    brain.neurons[0].output = distance<0.05;
+    brain.neurons[0].output = distance<0.05 && (
+      (position[0] - foodPos[0] > 0 == (position[2] > Math.PI/2 && position[2] < Math.PI*3/2)) && 
+      (position[1] - foodPos[1] < 0 == (position[2] > 0 && position[2] < Math.PI)));
     brain.update();
     //move position
     if(brain.neurons[brain.neurons.length - 3].output){//turn left
       position[2] += 0.05;
+      position[2] = modulus(position[2], Math.PI*2);
     }
     if(brain.neurons[brain.neurons.length - 2].output){//turn right
       position[2] -= 0.05;
+      position[2] = modulus(position[2], Math.PI*2);
     }
     if(brain.neurons[brain.neurons.length - 1].output){//forward
       position[0] += Math.cos(position[2])*0.05;
       position[1] += Math.sin(position[2])*0.05;
     }
-    ctx.clearRect(0,0,400,400);
+    ctx.clearRect(0,0,1000,1000);
     
     ctx.strokeRect(0,0,400,400);
     ctx.beginPath();
