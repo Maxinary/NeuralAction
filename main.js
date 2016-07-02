@@ -1,5 +1,7 @@
 "use strict";
 
+var touchDistance = 0.05;
+
 function randint(min, max){
   return Math.floor((max+1-min)*Math.random())+ min;
 }
@@ -143,21 +145,21 @@ function run(brain){
   var done = false;
   
   //ticks
-  for(;curTime < maxTime && Math.sqrt(Math.pow(position[0] - foodPos[0], 2) + Math.pow(position[1] - foodPos[1], 2)) > 0.05; curTime++){
+  for(;curTime < maxTime && Math.sqrt(Math.pow(position[0] - foodPos[0], 2) + Math.pow(position[1] - foodPos[1], 2)) > touchDistance; curTime++){
     //create input by finding if food is in front of the animal
     var distance = Math.abs(Math.tan(position[2])*foodPos[0] - Math.tan(position[2])*position[0] + position[1] - foodPos[1])/Math.sqrt(Math.pow(Math.tan(position[2]),2) + 1);//distance from line to point
-    var distance = Math.abs(Math.tan(position[2])*foodPos[0] - Math.tan(position[2])*position[0] + position[1] - foodPos[1])/Math.sqrt(Math.pow(Math.tan(position[2]),2) + 1);//distance from line to point
-    brain.neurons[0].output = distance<0.05 && (
+    brain.neurons[0].output = distance<touchDistance && (
       (position[0] - foodPos[0] > 0 == (position[2] > Math.PI/2 && position[2] < Math.PI*3/2)) && 
       (position[1] - foodPos[1] < 0 == (position[2] > 0 && position[2] < Math.PI)));
+    brain.update();
     //move position
     if(brain.neurons[brain.neurons.length - 3].output){//turn left
       position[2] += 0.05;
-      position[2] = modulus(position[2],Math.PI*2);
+      position[2] = modulus(position[2], Math.PI*2);
     }
     if(brain.neurons[brain.neurons.length - 2].output){//turn right
       position[2] -= 0.05;
-      position[2] = modulus(position[2],Math.PI*2);
+      position[2] = modulus(position[2], Math.PI*2);
     }
     if(brain.neurons[brain.neurons.length - 1].output){//forward
       position[0] += Math.cos(position[2])*0.05;
@@ -179,7 +181,7 @@ function animate(brain, ctx, speed){
   var runner = setInterval(function(){
     //create input by finding if food is in front of the animal
     var distance = Math.abs(Math.tan(position[2])*foodPos[0] - Math.tan(position[2])*position[0] + position[1] - foodPos[1])/Math.sqrt(Math.pow(Math.tan(position[2]),2) + 1);//distance from line to point
-    brain.neurons[0].output = distance<0.05 && (
+    brain.neurons[0].output = distance<touchDistance && (
       (position[0] - foodPos[0] > 0 == (position[2] > Math.PI/2 && position[2] < Math.PI*3/2)) && 
       (position[1] - foodPos[1] < 0 == (position[2] > 0 && position[2] < Math.PI)));
     brain.update();
@@ -207,10 +209,10 @@ function animate(brain, ctx, speed){
     ctx.closePath();
     ctx.stroke();
     
-    ctx.fillRect(foodPos[0]*400 - 1, foodPos[1]*400 - 1, 2, 2);
+    ctx.fillRect(foodPos[0]*400 - 3, foodPos[1]*400 - 3, 6, 6);
     
     curTime++;
-    if(curTime > maxTime || Math.sqrt(Math.pow(position[0] - foodPos[0], 2) + Math.pow(position[1] - foodPos[1], 2)) < 0.05){
+    if(curTime > maxTime || Math.sqrt(Math.pow(position[0] - foodPos[0], 2) + Math.pow(position[1] - foodPos[1], 2)) < touchDistance){
       clearInterval(runner);
     }
   },speed);
