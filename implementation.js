@@ -1,8 +1,8 @@
 var canvas = document.getElementById("drawing");
-canvas.width = 500;
-canvas.height = 500;
+canvas.width = 401;
+canvas.height = 401;
 
-var trials = 8;
+var trials = 6;
 
 //from http://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array-in-javascript
 function shuffle(a) {
@@ -25,14 +25,14 @@ function sort(array, key){
 
 
 colony = [new Brain(1,3)];//input:[food], outputs:[turn left, turn right, move forward]
-for(var i=0;i<6;i++){//the colony size will double 4 times and be of size 16
+for(var i=0;i<7;i++){//the colony size will double 4 times and be of size 16
   var current = colony.length;
   for(var j=0;j<current;j++){
     colony.push(colony[j].mutate());
   }
 }
 
-for(var i=0;i<30;i++){
+for(var i=0;i<24;i++){
   console.log(i);
   shuffle(colony);
   //remove least fit half
