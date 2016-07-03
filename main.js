@@ -176,7 +176,8 @@ function animate(brain, ctx, speed){
   var curTime = 0;
   var maxTime = 500;
   var done = false;
-  
+  ctx.lineWidth = 3;
+
   //ticks
   var runner = setInterval(function(){
     //create input by finding if food is in front of the animal
@@ -202,13 +203,19 @@ function animate(brain, ctx, speed){
     
     ctx.strokeRect(0,0,400,400);
     ctx.beginPath();
-    ctx.moveTo(position[0]*400 + Math.cos(position[2])*20, position[1]*400 + Math.sin(position[2])*20);
-    ctx.lineTo(position[0]*400 + Math.cos(position[2] + Math.PI*2/3)*14,position[1]*400 + Math.sin(position[2] + Math.PI*2/3)*14);
-    ctx.lineTo(position[0]*400 + Math.cos(position[2] + Math.PI*4/3)*14,position[1]*400 + Math.sin(position[2] + Math.PI*4/3)*14);
+    ctx.moveTo(position[0]*400 + Math.cos(position[2])*touchDistance*400, position[1]*400 + Math.sin(position[2])*touchDistance*400);
+    ctx.lineTo(position[0]*400 + Math.cos(position[2] + Math.PI*3/4)*touchDistance*400,position[1]*400 + Math.sin(position[2] + Math.PI*3/4)*touchDistance*400);
+    ctx.lineTo(position[0]*400 + Math.cos(position[2] + Math.PI*5/4)*touchDistance*400,position[1]*400 + Math.sin(position[2] + Math.PI*5/4)*touchDistance*400);
     
     ctx.closePath();
+    ctx.fillStyle = "#FF0000";
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(position[0]*400, position[1]*400, touchDistance*400, 0, Math.PI*2);
+    ctx.closePath();
     ctx.stroke();
-    
+    ctx.fillStyle = "#000000";
     ctx.fillRect(foodPos[0]*400 - 3, foodPos[1]*400 - 3, 6, 6);
     
     curTime++;
