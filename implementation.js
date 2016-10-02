@@ -2,7 +2,7 @@ var canvas = document.getElementById("drawing");
 canvas.width = 401;
 canvas.height = 401;
 
-var trials = 6;
+var trials = 12;
 
 //from http://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array-in-javascript
 function shuffle(a) {
@@ -25,14 +25,24 @@ function sort(array, key){
 
 
 colony = [new Brain(1,3)];//input:[food], outputs:[turn left, turn right, move forward]
-for(var i=0;i<7;i++){//the colony size will double 4 times and be of size 16
+for(var i=0;i<4;i++){//the colony size will double 4 times and be of size 16
   var current = colony.length;
   for(var j=0;j<current;j++){
     colony.push(colony[j].mutate());
   }
 }
 
-for(var i=0;i<24;i++){
+//prospective perfect brain
+var a=new Brain(1,3);
+a.neurons[0].inputs = [0,0,0,0];
+a.neurons[1].inputs = [1.1,0,0,0];
+a.neurons[1].process = Comparators["LT"];
+a.neurons[2].inputs = [0,0,0,0];
+a.neurons[3].inputs = [1.1,0,0,0];
+
+//colony[0] = a;
+
+for(var i=0;i<12;i++){
   console.log(i);
   shuffle(colony);
   //remove least fit half
@@ -41,11 +51,10 @@ for(var i=0;i<24;i++){
     for(var k=0;k<trials;k++){
       colony[j].fitness += run(colony[j]);
     }
-    if(colony[j].fitness === 0){
-      colony[j].fitness = trials*500 - 0.5;
-    }
+    colony[j].fitness /= Math.log(colony[j].neurons.length);
   }
   sort(colony, "fitness");
+  console.log(colony.map(function(value){return value.fitness;}));
   var l = colony.length;
   for(var j=0; j<Math.floor(l/2); j++){
     colony.splice(colony.length - 1, 1);
@@ -58,12 +67,5 @@ for(var i=0;i<24;i++){
 
 var ctx = canvas.getContext("2d");
 
-//prospective perfect brain
-var a=new Brain(1,3);
-a.neurons[0].inputs = [0,0,0,0];
-a.neurons[1].inputs = [1.1,0,0,0];
-a.neurons[1].process = Comparators["LT"];
-a.neurons[2].inputs = [0,0,0,0];
-a.neurons[3].inputs = [1.1,0,0,0];
 
 animate(colony[0], ctx, 25);

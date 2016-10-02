@@ -136,6 +136,18 @@ class Brain{
   }
 }
 
+class Colony{
+  constructor(arrayOrLength){
+    this.brains = [];
+    if(Array.isArray(arrayOrLength)){
+      //passed in an array of brain
+      
+    }else{
+      
+    }
+  }
+}
+
 function run(brain){
   //initialize
   var position = [0.5, 0.5, 0];//x(0 to 1), y(0 to 1), angle(0 to 2*PI)
